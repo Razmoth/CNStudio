@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static AssetStudioGUI.Exporter;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Object = AssetStudio.Object;
 
 namespace AssetStudioGUI
@@ -130,6 +131,100 @@ namespace AssetStudioGUI
                 file.stream.Dispose();
             }
             return extractedCount;
+        }
+
+        public static List<AssetEntry> BuildAssetMap(List<string> files)
+        {
+            List<AssetEntry> assets = new List<AssetEntry>();
+            Dictionary<long, string> NameLUT = new Dictionary<long, string>();
+            List<(int, long)> PPtrLUT = new List<(int, long)>();
+            for (int i = 0; i < files.Count; i++)
+            {
+                var file = files[i];
+                using (var reader = new FileReader(file))
+                {
+                    var bundleFile = new BundleFile(reader);
+                    if (bundleFile.fileList == null)
+                    {
+                        continue;
+                    }
+                    foreach (var cab in bundleFile.fileList)
+                    {
+                        var dummyPath = Path.Combine(Path.GetDirectoryName(reader.FullPath), cab.fileName);
+                        using (var cabReader = new FileReader(dummyPath, cab.stream))
+                        {
+                            if (cabReader.FileType == FileType.AssetsFile)
+                            {
+                                var assetsFile = new SerializedFile(cabReader, null);
+                                var objects = assetsFile.m_Objects.Where(x => x.HasExportableType()).ToArray();
+                                foreach (var obj in objects)
+                                {
+                                    var objectReader = new ObjectReader(assetsFile.reader, assetsFile, obj);
+                                    objectReader.Reset();
+                                    var asset = new AssetEntry()
+                                    {
+                                        SourcePath = reader.FullPath,
+                                        PathID = objectReader.m_PathID,
+                                        Type = objectReader.type
+                                    };
+                                    var exportable = true;
+                                    switch (objectReader.type)
+                                    {
+                                        case ClassIDType.GameObject:
+                                            var gameObject = new GameObject(objectReader);
+                                            if (!NameLUT.ContainsKey(objectReader.m_PathID))
+                                            {
+                                                NameLUT.Add(objectReader.m_PathID, gameObject.m_Name);
+                                            }
+                                            exportable = false;
+                                            break;
+                                        case ClassIDType.Shader:
+                                            asset.Name = objectReader.ReadAlignedString();
+                                            if (string.IsNullOrEmpty(asset.Name))
+                                            {
+                                                var m_parsedForm = new SerializedShader(objectReader);
+                                                asset.Name = m_parsedForm.m_Name;
+                                            }
+                                            break;
+                                        case ClassIDType.Animator:
+                                            var gameObjectPPtr = new PPtr<GameObject>(objectReader);
+                                            PPtrLUT.Add((assets.Count, gameObjectPPtr.m_PathID));
+                                            asset.Name = "AnimatorPlaceholder";
+                                            break;
+                                        default:
+                                            asset.Name = objectReader.ReadAlignedString();
+                                            break;
+                                    }
+                                    if (exportable)
+                                    {
+                                        assets.Add(asset);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Logger.Info($"[{i + 1}/{files.Count}] Processed {Path.GetFileName(file)}");
+                Progress.Report(i + 1, files.Count);
+            }
+
+            Logger.Info("Processing PPtr names");
+            foreach (var pptr in PPtrLUT)
+            {
+                var asset = assets[pptr.Item1];
+                if (NameLUT.TryGetValue(pptr.Item2, out var name))
+                {
+                    asset.Name = name;
+                }
+                else
+                {
+                    Logger.Warning($"No name found for pathID {pptr.Item2}, removing...");
+                    assets.Remove(asset);
+                }
+            }
+
+            return assets;
         }
 
         public static (string, List<TreeNode>) BuildAssetData()
@@ -457,6 +552,50 @@ namespace AssetStudioGUI
                 StatusStripUpdate(statusText);
 
                 if (Properties.Settings.Default.openAfterExport && exportedCount > 0)
+                {
+                    OpenFolderInExplorer(savePath);
+                }
+            });
+        }
+
+        public static void ExportAssetsMap(string savePath, List<AssetEntry> toExportAssets, ExportListType exportListType)
+        {
+            ThreadPool.QueueUserWorkItem(state =>
+            {
+                Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+
+                Progress.Reset();
+
+                string filename;
+                switch (exportListType)
+                {
+                    case ExportListType.XML:
+                        filename = Path.Combine(savePath, "assets_map.xml");
+                        var doc = new XDocument(
+                            new XElement("Assets",
+                                new XAttribute("filename", filename),
+                                new XAttribute("createdAt", DateTime.UtcNow.ToString("s")),
+                                toExportAssets.Select(
+                                    asset => new XElement("Asset",
+                                        new XElement("Name", asset.Name),
+                                        new XElement("Type", new XAttribute("id", (int)asset.Type), asset.Type.ToString()),
+                                        new XElement("PathID", asset.PathID),
+                                        new XElement("Source", asset.SourcePath)
+                                    )
+                                )
+                            )
+                        );
+                        doc.Save(filename);
+                        break;
+                }
+
+                var statusText = $"Finished exporting asset list with {toExportAssets.Count()} items.";
+
+                StatusStripUpdate(statusText);
+
+                Logger.Info($"AssetMap build successfully !!");
+
+                if (Properties.Settings.Default.openAfterExport && toExportAssets.Count() > 0)
                 {
                     OpenFolderInExplorer(savePath);
                 }

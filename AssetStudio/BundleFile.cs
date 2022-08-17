@@ -66,6 +66,8 @@ namespace AssetStudio
 
         public StreamFile[] fileList;
 
+        public PGR PGR;
+
         public BundleFile(FileReader reader)
         {
             m_Header = new Header();
@@ -243,6 +245,7 @@ namespace AssetStudio
             }
             else //0x40 BlocksAndDirectoryInfoCombined
             {
+                PGR = new PGR(reader);
                 blocksInfoBytes = reader.ReadBytes((int)m_Header.compressedBlocksInfoSize);
             }
             MemoryStream blocksInfoUncompresseddStream;
@@ -308,16 +311,17 @@ namespace AssetStudio
                     };
                 }
             }
-            if ((m_Header.flags & ArchiveFlags.BlockInfoNeedPaddingAtStart) != 0)
-            {
-                reader.AlignStream(16);
-            }
+            //if ((m_Header.flags & ArchiveFlags.BlockInfoNeedPaddingAtStart) != 0)
+            //{
+            //    reader.AlignStream(16);
+            //}
         }
 
         private void ReadBlocks(EndianBinaryReader reader, Stream blocksStream)
         {
-            foreach (var blockInfo in m_BlocksInfo)
+            for (int i = 0; i < m_BlocksInfo.Length; i++)
             {
+                var blockInfo = m_BlocksInfo[i];
                 var compressionType = (CompressionType)(blockInfo.flags & StorageBlockFlags.CompressionTypeMask);
                 switch (compressionType)
                 {
@@ -339,6 +343,10 @@ namespace AssetStudio
                             reader.Read(compressedBytes, 0, compressedSize);
                             var uncompressedSize = (int)blockInfo.uncompressedSize;
                             var uncompressedBytes = BigArrayPool<byte>.Shared.Rent(uncompressedSize);
+                            if (((int)blockInfo.flags & 0x100) != 0)
+                            {
+                                PGR.DecryptBlock(compressedBytes, compressedSize, i);
+                            }
                             var numWrite = LZ4Codec.Decode(compressedBytes, 0, compressedSize, uncompressedBytes, 0, uncompressedSize);
                             if (numWrite != uncompressedSize)
                             {
