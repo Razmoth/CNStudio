@@ -1,7 +1,7 @@
 # PGRStudio
 Check out the [original AssetStudio project](https://github.com/Perfare/AssetStudio) for more information.
 
-This is the release of BH3Studio, Modded AssetStudio that should work with Punishing: Gray Raven.
+This is the release of PGRStudio, Modded AssetStudio that should work with Punishing: Gray Raven.
 _____________________________________________________________________________________________________________________________
 
 Some features are:
