@@ -1,10 +1,8 @@
-name: AssetStudioBuild
+name: Build
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags: [ '*' ]
 
   workflow_dispatch:
 
@@ -15,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: microsoft/setup-msbuild@v1.1
-      
+
       - name: Download FBX SDK
         run: |
           md fbx
@@ -25,10 +23,9 @@ jobs:
           Invoke-WebRequest "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-2-1/fbx202021_fbxsdk_vs2019_pdbs.exe" -OutFile "fbxpdb.exe"
           Start-Process -FilePath "fbxpdb.exe" /S -Wait
           cd ..
-
       - name: Nuget Restore
         run: nuget restore
-      
+
       - name: Build .Net472
         run: msbuild /p:Configuration=Release /p:TargetFramework=net472 /verbosity:minimal
 
@@ -38,20 +35,38 @@ jobs:
       - name: Build .Net6
         run: msbuild /t:AssetStudioGUI:publish /p:Configuration=Release /p:TargetFramework=net6.0-windows /p:SelfContained=false /verbosity:minimal
 
+      - name: Build .Net5 CLI
+        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net5.0-windows /p:SelfContained=false /verbosity:minimal
+
+      - name: Build .Net6 CLI
+        run: msbuild /t:AssetStudioCLI:publish /p:Configuration=Release /p:TargetFramework=net6.0-windows /p:SelfContained=false /verbosity:minimal
+
       - name: Upload .Net472 Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: AssetStudio.net472
+          name: net472
           path: AssetStudioGUI/bin/Release/net472
 
       - name: Upload .Net5 Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: AssetStudio.net5
+          name: net5.0-windows
           path: AssetStudioGUI/bin/Release/net5.0-windows/publish
 
       - name: Upload .Net6 Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: AssetStudio.net6
+          name: net6.0-windows
+          path: AssetStudioGUI/bin/Release/net6.0-windows/publish
+
+      - name: Upload .Net5 CLI Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: net5.0-windows
+          path: AssetStudioGUI/bin/Release/net5.0-windows/publish
+
+      - name: Upload .Net6 CLI Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: net6.0-windows
           path: AssetStudioGUI/bin/Release/net6.0-windows/publish

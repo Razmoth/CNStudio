@@ -163,6 +163,40 @@ namespace AssetStudio
                     CheckStrippedVersion(assetsFile);
                     assetsFileList.Add(assetsFile);
                     assetsFileListHash.Add(assetsFile.fileName);
+
+                    foreach (var sharedFile in assetsFile.m_Externals)
+                    {
+                        var sharedFileName = sharedFile.fileName;
+
+                        if (!importFilesHash.Contains(sharedFileName))
+                        {
+                            var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
+                            if (!noexistFiles.Contains(sharedFilePath))
+                            {
+                                if (!File.Exists(sharedFilePath))
+                                {
+                                    var findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
+                                    if (findFiles.Length > 0)
+                                    {
+                                        sharedFilePath = findFiles[0];
+                                    }
+                                }
+                                if (CABManager.CABMap.TryGetValue(sharedFileName, out var path))
+                                {
+                                    sharedFilePath = path;
+                                }
+                                if (File.Exists(sharedFilePath))
+                                {
+                                    importFiles.Add(sharedFilePath);
+                                    importFilesHash.Add(sharedFileName);
+                                }
+                                else
+                                {
+                                    noexistFiles.Add(sharedFilePath);
+                                }
+                            }
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -390,7 +424,7 @@ namespace AssetStudio
                     var objectReader = new ObjectReader(assetsFile.reader, assetsFile, objectInfo);
                     try
                     {
-                        Object obj;
+                        Object obj = null;
                         switch (objectReader.type)
                         {
                             case ClassIDType.Animation:
@@ -480,6 +514,10 @@ namespace AssetStudio
                             default:
                                 obj = new Object(objectReader);
                                 break;
+                        }
+                        if (obj == null)
+                        {
+                            continue;
                         }
                         assetsFile.AddObject(obj);
                     }

@@ -16,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static AssetStudioGUI.Studio;
 using Font = AssetStudio.Font;
 #if NET472
@@ -97,18 +98,36 @@ namespace AssetStudioGUI
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             InitializeComponent();
-            Text = $"AssetStudioGUI v{Application.ProductVersion}";
+            Text = $"PGRStudio v{Application.ProductVersion}";
             delayTimer = new System.Timers.Timer(800);
             delayTimer.Elapsed += new ElapsedEventHandler(delayTimer_Elapsed);
+            console.Checked = Properties.Settings.Default.console;
             displayAll.Checked = Properties.Settings.Default.displayAll;
             displayInfo.Checked = Properties.Settings.Default.displayInfo;
             enablePreview.Checked = Properties.Settings.Default.enablePreview;
+            specifyGameVersion.Items.AddRange(VersionManager.GetVersionNames());
+            specifyGameVersion.SelectedIndex = Properties.Settings.Default.gameVersion;
+            PGR.Version = Properties.Settings.Default.gameVersion;
+            ConsoleHelper.AllocConsole();
+            ConsoleHelper.SetConsoleTitle("Debug Console");
             FMODinit();
 
             logger = new GUILogger(StatusStripUpdate);
-            Logger.Default = logger;
+            var handle = ConsoleHelper.GetConsoleWindow();
+            if (console.Checked)
+            {
+                Logger.Default = new ConsoleLogger();
+                ConsoleHelper.ShowWindow(handle, ConsoleHelper.SW_SHOW);
+            }
+            else
+            {
+                Logger.Default = logger;
+                ConsoleHelper.ShowWindow(handle, ConsoleHelper.SW_HIDE);
+            }
             Progress.Default = new Progress<int>(SetProgressBarValue);
             Studio.StatusStripUpdate = StatusStripUpdate;
+            Logger.Info($"Target Version is {specifyGameVersion.SelectedItem}");
+            CABManager.LoadMap(specifyGameVersion.SelectedIndex);
         }
 
         private void AssetStudioGUIForm_DragEnter(object sender, DragEventArgs e)
@@ -132,6 +151,10 @@ namespace AssetStudioGUI
                 }
                 else
                 {
+                    if (paths.Length == 1 && File.Exists(paths[0]) && Path.GetExtension(paths[0]) == ".txt")
+                    {
+                        paths = File.ReadAllLines(paths[0]);
+                    }
                     await Task.Run(() => assetsManager.LoadFiles(paths));
                 }
                 BuildAssetStructures();
@@ -211,11 +234,11 @@ namespace AssetStudioGUI
 
             if (!string.IsNullOrEmpty(productName))
             {
-                Text = $"AssetStudioGUI v{Application.ProductVersion} - {productName} - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
+                Text = $"PGRStudio v{Application.ProductVersion} - {productName} - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
             }
             else
             {
-                Text = $"AssetStudioGUI v{Application.ProductVersion} - no productName - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
+                Text = $"PGRStudio v{Application.ProductVersion} - Punishing: Gray Raven - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
             }
 
             assetListView.VirtualListSize = visibleAssets.Count;
@@ -369,6 +392,24 @@ namespace AssetStudioGUI
 
                     StatusStripUpdate("Finished exporting class structures");
                 }
+            }
+        }
+
+        private void console_CheckedChanged(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.console = console.Checked;
+            Properties.Settings.Default.Save();
+
+            var handle = ConsoleHelper.GetConsoleWindow();
+            if (console.Checked)
+            {
+                Logger.Default = new ConsoleLogger();
+                ConsoleHelper.ShowWindow(handle, ConsoleHelper.SW_SHOW);
+            }
+            else
+            {
+                Logger.Default = logger;
+                ConsoleHelper.ShowWindow(handle, ConsoleHelper.SW_HIDE);
             }
         }
 
@@ -1217,7 +1258,7 @@ namespace AssetStudioGUI
 
         private void ResetForm()
         {
-            Text = $"AssetStudioGUI v{Application.ProductVersion}";
+            Text = $"PGRStudio v{Application.ProductVersion}";
             assetsManager.Clear();
             assemblyLoader.Clear();
             exportableAssets.Clear();
@@ -2047,6 +2088,55 @@ namespace AssetStudioGUI
         private void toolStripMenuItem15_Click(object sender, EventArgs e)
         {
             logger.ShowErrorMessage = toolStripMenuItem15.Checked;
+        }
+
+        private async void buildPGRMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openFolderDialog = new OpenFolderDialog();
+            openFolderDialog.Title = $"Select assets Folder";
+            if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                Logger.Info("scanning for files");
+                var files = Directory.GetFiles(openFolderDialog.Folder, "*.*", SearchOption.AllDirectories).ToList();
+                Logger.Info(string.Format("found {0} files", files.Count()));
+                await Task.Run(() => CABManager.BuildMap(files, specifyGameVersion.SelectedIndex));
+            }
+        }
+
+        private async void buildAssetMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openFolderDialog = new OpenFolderDialog();
+            openFolderDialog.Title = $"Select assets Folder";
+            if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                Logger.Info("scanning for files");
+                var files = Directory.GetFiles(openFolderDialog.Folder, "*.*", SearchOption.AllDirectories).ToList();
+                Logger.Info(string.Format("found {0} files", files.Count()));
+
+                var saveFolderDialog = new OpenFolderDialog();
+                saveFolderDialog.InitialFolder = saveDirectoryBackup;
+                saveFolderDialog.Title = "Select Output Folder";
+                if (saveFolderDialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    timer.Stop();
+                    saveDirectoryBackup = saveFolderDialog.Folder;
+                    List<AssetEntry> toExportAssets = await Task.Run(() => BuildAssetMap(files));
+                    ExportAssetsMap(saveFolderDialog.Folder, toExportAssets, ExportListType.XML);
+                }
+            }
+        }
+
+        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            optionsToolStripMenuItem.DropDown.Visible = false;
+            Properties.Settings.Default.gameVersion = specifyGameVersion.SelectedIndex;
+            Properties.Settings.Default.Save();
+
+            PGR.Version = specifyGameVersion.SelectedIndex;
+            Logger.Info($"Target Version is {specifyGameVersion.SelectedItem}");
+
+            ResetForm();
+            CABManager.LoadMap(specifyGameVersion.SelectedIndex);
         }
 
         private void glControl1_MouseWheel(object sender, MouseEventArgs e)

@@ -16,5 +16,20 @@ namespace AssetStudio
 
         public long m_PathID;
         public SerializedType serializedType;
+
+        public bool HasExportableType()
+        {
+            var typeID = (ClassIDType)classID;
+            return typeID == ClassIDType.GameObject
+                || typeID == ClassIDType.Texture2D
+                || typeID == ClassIDType.Mesh
+                || typeID == ClassIDType.Shader
+                || typeID == ClassIDType.TextAsset
+                || typeID == ClassIDType.AnimationClip
+                || typeID == ClassIDType.Animator
+                || typeID == ClassIDType.Font
+                || typeID == ClassIDType.AssetBundle
+                || typeID == ClassIDType.Sprite;
+        }
     }
 }
