@@ -21,9 +21,7 @@ namespace AssetStudio
 
         public PGR(EndianBinaryReader reader)
         {
-            var isEncrypted = reader.ReadUInt32();
-            if (isEncrypted == 0)
-                throw new Exception("Not Encrypted !!");
+            var value = reader.ReadUInt32();
 
             var (data1, key1) = ReadVector(reader);
             var (data2, key2) = ReadVector(reader);

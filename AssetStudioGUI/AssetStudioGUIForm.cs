@@ -2099,7 +2099,8 @@ namespace AssetStudioGUI
                 Logger.Info("scanning for files");
                 var files = Directory.GetFiles(openFolderDialog.Folder, "*.*", SearchOption.AllDirectories).ToList();
                 Logger.Info(string.Format("found {0} files", files.Count()));
-                await Task.Run(() => CABManager.BuildMap(files, specifyGameVersion.SelectedIndex));
+                var version = specifyGameVersion.SelectedIndex;
+                await Task.Run(() => CABManager.BuildMap(files, version));
             }
         }
 
