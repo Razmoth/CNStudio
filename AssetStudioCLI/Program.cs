@@ -47,7 +47,7 @@ namespace AssetStudioCLI
                         return;
                     }
 
-                    PGR.Version = o.GameVersion;
+                    PGR.UpdateKey(o.GameVersion);
 
                     if (!o.Silent)
                     {

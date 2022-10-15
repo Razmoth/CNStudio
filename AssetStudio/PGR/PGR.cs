@@ -1,27 +1,35 @@
 ﻿using System;
-using System.Collections;
-using System.IO;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace AssetStudio
 {
     public class PGR
     {
-        public static int Version;
         private const string Header = "#$unity3dchina!@";
-        private readonly byte[] KeyBytes = Encoding.UTF8.GetBytes(Keys[Version]);
+
+        private static readonly Aes Aes;
         private static readonly string[] Keys =
         {
             "kurokurokurokuro",
             "y5XPvqLOrCokWRIa"
         };
 
+        private static ICryptoTransform Encryptor;
+
         public byte[] Index = new byte[0x10];
         public byte[] Sub = new byte[0x10];
 
+        static PGR()
+        {
+            Aes = Aes.Create("AesManaged");
+            Aes.Mode = CipherMode.ECB;
+            Encryptor = Aes.CreateEncryptor();
+        }
+
         public PGR(EndianBinaryReader reader)
         {
-            var value = reader.ReadUInt32();
+            reader.ReadUInt32();
 
             var (data1, key1) = ReadVector(reader);
             var (data2, key2) = ReadVector(reader);
@@ -45,6 +53,16 @@ namespace AssetStudio
             }
         }
 
+        public static void UpdateKey(int version)
+        {
+            var selectedKey = Keys[version];
+            var keyBytes = Encoding.UTF8.GetBytes(selectedKey);
+
+            Aes.Key = keyBytes;
+
+            Encryptor = Aes.CreateEncryptor();
+        }
+
         public void DecryptBlock(byte[] bytes, int size, int index)
         {
             var offset = 0;
@@ -65,7 +83,7 @@ namespace AssetStudio
 
         private void DecryptKey(byte[] key, byte[] data)
         {
-            key = AES.Encrypt(key, KeyBytes);
+            key = Encryptor.TransformFinalBlock(key, 0, key.Length);
             for (int i = 0; i < 0x10; i++)
                 data[i] ^= key[i];
         }

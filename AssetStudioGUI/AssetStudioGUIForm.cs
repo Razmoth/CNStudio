@@ -107,7 +107,7 @@ namespace AssetStudioGUI
             enablePreview.Checked = Properties.Settings.Default.enablePreview;
             specifyGameVersion.Items.AddRange(VersionManager.GetVersionNames());
             specifyGameVersion.SelectedIndex = Properties.Settings.Default.gameVersion;
-            PGR.Version = Properties.Settings.Default.gameVersion;
+            PGR.UpdateKey(Properties.Settings.Default.gameVersion);
             ConsoleHelper.AllocConsole();
             ConsoleHelper.SetConsoleTitle("Debug Console");
             FMODinit();
@@ -2133,7 +2133,7 @@ namespace AssetStudioGUI
             Properties.Settings.Default.gameVersion = specifyGameVersion.SelectedIndex;
             Properties.Settings.Default.Save();
 
-            PGR.Version = specifyGameVersion.SelectedIndex;
+            PGR.UpdateKey(specifyGameVersion.SelectedIndex);
             Logger.Info($"Target Version is {specifyGameVersion.SelectedItem}");
 
             ResetForm();
