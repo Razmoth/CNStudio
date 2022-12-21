@@ -231,6 +231,7 @@ namespace AssetStudio
 
         private void ReadBlocksInfoAndDirectory(EndianBinaryReader reader)
         {
+            PGR = new PGR(reader);
             byte[] blocksInfoBytes;
             if (m_Header.version >= 7)
             {
@@ -245,7 +246,6 @@ namespace AssetStudio
             }
             else //0x40 BlocksAndDirectoryInfoCombined
             {
-                PGR = new PGR(reader);
                 blocksInfoBytes = reader.ReadBytes((int)m_Header.compressedBlocksInfoSize);
             }
             MemoryStream blocksInfoUncompresseddStream;
