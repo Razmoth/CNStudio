@@ -11,6 +11,7 @@ Some features are:
 - CLI version.
 - Option "Option -> Export Options -> Ignore Controller Animations" to export model/aniamators without including all animations (slow).
 - Load Assets listed in `.txt` file.
+- Select/Add/Remove entries "Option -> Specify CNUnity Key" | NOTE: double-click on row header to select an entry.
 ```
 _____________________________________________________________________________________________________________________________
 How to use:
