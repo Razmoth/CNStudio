@@ -14,7 +14,7 @@ namespace AssetStudioGUI
             this.action = action;
         }
 
-        public void Log(LoggerEvent loggerEvent, string message)
+        public void Log(LoggerEvent loggerEvent, string message, bool silent)
         {
             switch (loggerEvent)
             {

@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AssetStudio
 {
@@ -12,7 +13,8 @@ namespace AssetStudio
         BlocksAndDirectoryInfoCombined = 0x40,
         BlocksInfoAtTheEnd = 0x80,
         OldWebPluginCompatibility = 0x100,
-        BlockInfoNeedPaddingAtStart = 0x200
+        BlockInfoNeedPaddingAtStart = 0x200,
+        CNUnityEncryption = 0x400
     }
 
     [Flags]
@@ -60,13 +62,12 @@ namespace AssetStudio
             public string path;
         }
 
+        public CNUnity CNUnity;
         public Header m_Header;
         private StorageBlock[] m_BlocksInfo;
         private Node[] m_DirectoryInfo;
 
         public StreamFile[] fileList = new StreamFile[0];
-
-        public PGR PGR;
 
         public BundleFile(FileReader reader)
         {
@@ -94,6 +95,7 @@ namespace AssetStudio
                     break;
                 case "UnityFS":
                     ReadHeader(reader);
+                    ReadCNUnity(reader);
                     ReadBlocksInfoAndDirectory(reader);
                     using (var blocksStream = CreateBlocksStream(reader.FullPath))
                     {
@@ -229,9 +231,32 @@ namespace AssetStudio
             }
         }
 
+        private void ReadCNUnity(EndianBinaryReader reader)
+        {
+            ArchiveFlags mask;
+
+            var version = ParseVersion();
+            //Flag changed it in these versions
+            if (version[0] < 2020 || //2020 and earlier
+                (version[0] == 2020 && version[1] == 3 && version[2] <= 34) || //2020.3.34 and earlier
+                (version[0] == 2021 && version[1] == 3 && version[2] <= 2) || //2021.3.2 and earlier
+                (version[0] == 2022 && version[1] == 3 && version[2] <= 1)) //2022.3.1 and earlier
+            {
+                mask = ArchiveFlags.BlockInfoNeedPaddingAtStart;
+            }
+            else
+            {
+                mask = ArchiveFlags.CNUnityEncryption;
+            }
+
+            if ((m_Header.flags & mask) != 0)
+            {
+                CNUnity = new CNUnity(reader);
+            }
+        }
+
         private void ReadBlocksInfoAndDirectory(EndianBinaryReader reader)
         {
-            PGR = new PGR(reader);
             byte[] blocksInfoBytes;
             if (m_Header.version >= 7)
             {
@@ -345,7 +370,7 @@ namespace AssetStudio
                             var uncompressedBytes = BigArrayPool<byte>.Shared.Rent(uncompressedSize);
                             if (((int)blockInfo.flags & 0x100) != 0)
                             {
-                                PGR.DecryptBlock(compressedBytes, compressedSize, i);
+                                CNUnity.DecryptBlock(compressedBytes, compressedSize, i);
                             }
                             var numWrite = LZ4Codec.Decode(compressedBytes, 0, compressedSize, uncompressedBytes, 0, uncompressedSize);
                             if (numWrite != uncompressedSize)
@@ -362,6 +387,12 @@ namespace AssetStudio
                 }
             }
             blocksStream.Position = 0;
+        }
+
+        public int[] ParseVersion()
+        {
+            var versionSplit = Regex.Replace(m_Header.unityRevision, @"\D", ".").Split(new[] { "." }, StringSplitOptions.RemoveEmptyEntries);
+            return versionSplit.Select(int.Parse).ToArray();
         }
     }
 }

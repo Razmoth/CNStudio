@@ -53,12 +53,13 @@ namespace AssetStudioGUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int gameVersion {
+        public int selectedCNUnityKey
+        {
             get {
-                return ((int)(this["gameVersion"]));
+                return ((int)(this["selectedCNUnityKey"]));
             }
             set {
-                this["gameVersion"] = value;
+                this["selectedCNUnityKey"] = value;
             }
         }
         

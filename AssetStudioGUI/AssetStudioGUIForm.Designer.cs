@@ -1,4 +1,6 @@
-﻿namespace AssetStudioGUI
+﻿using System;
+
+namespace AssetStudioGUI
 {
     partial class AssetStudioGUIForm
     {
@@ -41,10 +43,9 @@
             this.displayAll = new System.Windows.Forms.ToolStripMenuItem();
             this.enablePreview = new System.Windows.Forms.ToolStripMenuItem();
             this.displayInfo = new System.Windows.Forms.ToolStripMenuItem();
-            this.specifyGameVersionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.specifyGameVersion = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
             this.specifyUnityVersion = new System.Windows.Forms.ToolStripTextBox();
+            this.specifyCNUnityKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showExpOpt = new System.Windows.Forms.ToolStripMenuItem();
             this.modelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportAllObjectssplitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,6 +80,14 @@
             this.toolStripMenuItem15 = new System.Windows.Forms.ToolStripMenuItem();
             this.exportClassStructuresMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.console = new System.Windows.Forms.ToolStripMenuItem();
+            this.miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CABMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CABMapNameComboBox = new System.Windows.Forms.ToolStripComboBox();
+            this.buildCABMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearCABMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.assetMapNameTextBox = new System.Windows.Forms.ToolStripTextBox();
+            this.buildAssetMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -129,9 +138,7 @@
             this.exportAnimatorwithselectedAnimationClipMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.goToSceneHierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showOriginalFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.miscToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildPGRMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.buildAssetMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.enableResolveDependencies = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -220,8 +227,9 @@
             this.displayAll,
             this.enablePreview,
             this.displayInfo,
-            this.specifyGameVersionToolStripMenuItem,
+            this.enableResolveDependencies,
             this.toolStripMenuItem14,
+            this.specifyCNUnityKeyToolStripMenuItem,
             this.showExpOpt});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -231,7 +239,7 @@
             // 
             this.displayAll.CheckOnClick = true;
             this.displayAll.Name = "displayAll";
-            this.displayAll.Size = new System.Drawing.Size(207, 22);
+            this.displayAll.Size = new System.Drawing.Size(225, 22);
             this.displayAll.Text = "Display all assets";
             this.displayAll.ToolTipText = "Check this option will display all types assets. Not extractable assets can expor" +
     "t the RAW file.";
@@ -243,7 +251,7 @@
             this.enablePreview.CheckOnClick = true;
             this.enablePreview.CheckState = System.Windows.Forms.CheckState.Checked;
             this.enablePreview.Name = "enablePreview";
-            this.enablePreview.Size = new System.Drawing.Size(207, 22);
+            this.enablePreview.Size = new System.Drawing.Size(225, 22);
             this.enablePreview.Text = "Enable preview";
             this.enablePreview.ToolTipText = "Toggle the loading and preview of readable assets, such as images, sounds, text, " +
     "etc.\r\nDisable preview if you have performance or compatibility issues.";
@@ -255,33 +263,18 @@
             this.displayInfo.CheckOnClick = true;
             this.displayInfo.CheckState = System.Windows.Forms.CheckState.Checked;
             this.displayInfo.Name = "displayInfo";
-            this.displayInfo.Size = new System.Drawing.Size(207, 22);
+            this.displayInfo.Size = new System.Drawing.Size(225, 22);
             this.displayInfo.Text = "Display asset infromation";
             this.displayInfo.ToolTipText = "Toggle the overlay that shows information about each asset, eg. image size, forma" +
     "t, audio bitrate, etc.";
             this.displayInfo.CheckedChanged += new System.EventHandler(this.displayAssetInfo_Check);
-            // 
-            // specifyGameVersionToolStripMenuItem
-            // 
-            this.specifyGameVersionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.specifyGameVersion});
-            this.specifyGameVersionToolStripMenuItem.Name = "specifyGameVersionToolStripMenuItem";
-            this.specifyGameVersionToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.specifyGameVersionToolStripMenuItem.Text = "Specify Game Version";
-            // 
-            // specifyGameVersion
-            // 
-            this.specifyGameVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.specifyGameVersion.Name = "specifyGameVersion";
-            this.specifyGameVersion.Size = new System.Drawing.Size(121, 23);
-            this.specifyGameVersion.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBox1_SelectedIndexChanged);
             // 
             // toolStripMenuItem14
             // 
             this.toolStripMenuItem14.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.specifyUnityVersion});
             this.toolStripMenuItem14.Name = "toolStripMenuItem14";
-            this.toolStripMenuItem14.Size = new System.Drawing.Size(207, 22);
+            this.toolStripMenuItem14.Size = new System.Drawing.Size(225, 22);
             this.toolStripMenuItem14.Text = "Specify Unity version";
             // 
             // specifyUnityVersion
@@ -290,10 +283,17 @@
             this.specifyUnityVersion.Name = "specifyUnityVersion";
             this.specifyUnityVersion.Size = new System.Drawing.Size(100, 23);
             // 
+            // specifyCNUnityKeyToolStripMenuItem
+            // 
+            this.specifyCNUnityKeyToolStripMenuItem.Name = "specifyCNUnityKeyToolStripMenuItem";
+            this.specifyCNUnityKeyToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.specifyCNUnityKeyToolStripMenuItem.Text = "Specify CNUnity Key";
+            this.specifyCNUnityKeyToolStripMenuItem.Click += new System.EventHandler(this.specifyCNUnityKeyToolStripMenuItem_Click);
+            // 
             // showExpOpt
             // 
             this.showExpOpt.Name = "showExpOpt";
-            this.showExpOpt.Size = new System.Drawing.Size(207, 22);
+            this.showExpOpt.Size = new System.Drawing.Size(225, 22);
             this.showExpOpt.Text = "Export options";
             this.showExpOpt.Click += new System.EventHandler(this.showExpOpt_Click);
             // 
@@ -559,6 +559,68 @@
             this.console.ToolTipText = "Check this option to log all events on a debug console.";
             this.console.CheckedChanged += new System.EventHandler(this.console_CheckedChanged);
             // 
+            // miscToolStripMenuItem
+            // 
+            this.miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CABMapToolStripMenuItem,
+            this.assetMapToolStripMenuItem});
+            this.miscToolStripMenuItem.Name = "miscToolStripMenuItem";
+            this.miscToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            this.miscToolStripMenuItem.Text = "Misc.";
+            // 
+            // CABMapToolStripMenuItem
+            // 
+            this.CABMapToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CABMapNameComboBox,
+            this.buildCABMapToolStripMenuItem,
+            this.clearCABMapToolStripMenuItem});
+            this.CABMapToolStripMenuItem.Name = "CABMapToolStripMenuItem";
+            this.CABMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.CABMapToolStripMenuItem.Text = "CABMap";
+            // 
+            // CABMapNameComboBox
+            // 
+            this.CABMapNameComboBox.Name = "CABMapNameComboBox";
+            this.CABMapNameComboBox.Size = new System.Drawing.Size(121, 23);
+            this.CABMapNameComboBox.DropDown += new System.EventHandler(this.CABMapNameComboBox_DropDown);
+            this.CABMapNameComboBox.SelectedIndexChanged += new System.EventHandler(this.CABMapNameComboBox_SelectedIndexChanged);
+            // 
+            // buildCABMapToolStripMenuItem
+            // 
+            this.buildCABMapToolStripMenuItem.Name = "buildCABMapToolStripMenuItem";
+            this.buildCABMapToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.buildCABMapToolStripMenuItem.Text = "Build CABMap";
+            this.buildCABMapToolStripMenuItem.Click += new System.EventHandler(this.buildCABMapToolStripMenuItem_Click);
+            // 
+            // clearCABMapToolStripMenuItem
+            // 
+            this.clearCABMapToolStripMenuItem.Name = "clearCABMapToolStripMenuItem";
+            this.clearCABMapToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.clearCABMapToolStripMenuItem.Text = "Clear CABMap";
+            this.clearCABMapToolStripMenuItem.Click += new System.EventHandler(this.clearCABMapToolStripMenuItem_Click);
+            // 
+            // assetMapToolStripMenuItem
+            // 
+            this.assetMapToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.assetMapNameTextBox,
+            this.buildAssetMapToolStripMenuItem});
+            this.assetMapToolStripMenuItem.Name = "assetMapToolStripMenuItem";
+            this.assetMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.assetMapToolStripMenuItem.Text = "AssetMap";
+            // 
+            // assetMapNameTextBox
+            // 
+            this.assetMapNameTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.assetMapNameTextBox.Name = "assetMapNameTextBox";
+            this.assetMapNameTextBox.Size = new System.Drawing.Size(100, 23);
+            // 
+            // buildAssetMapToolStripMenuItem
+            // 
+            this.buildAssetMapToolStripMenuItem.Name = "buildAssetMapToolStripMenuItem";
+            this.buildAssetMapToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.buildAssetMapToolStripMenuItem.Text = "Build AssetMap";
+            this.buildAssetMapToolStripMenuItem.Click += new System.EventHandler(this.buildAssetMapToolStripMenuItem_Click);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -639,7 +701,7 @@
             this.tabPage2.Controls.Add(this.listSearch);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(472, 608);
+            this.tabPage2.Size = new System.Drawing.Size(472, 609);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Asset List";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -658,7 +720,7 @@
             this.assetListView.HideSelection = false;
             this.assetListView.Location = new System.Drawing.Point(0, 20);
             this.assetListView.Name = "assetListView";
-            this.assetListView.Size = new System.Drawing.Size(472, 588);
+            this.assetListView.Size = new System.Drawing.Size(472, 589);
             this.assetListView.TabIndex = 1;
             this.assetListView.UseCompatibleStateImageBehavior = false;
             this.assetListView.View = System.Windows.Forms.View.Details;
@@ -710,7 +772,7 @@
             this.tabPage3.Controls.Add(this.classesListView);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(472, 608);
+            this.tabPage3.Size = new System.Drawing.Size(472, 609);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Asset Classes";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -726,7 +788,7 @@
             this.classesListView.Location = new System.Drawing.Point(0, 0);
             this.classesListView.MultiSelect = false;
             this.classesListView.Name = "classesListView";
-            this.classesListView.Size = new System.Drawing.Size(472, 608);
+            this.classesListView.Size = new System.Drawing.Size(472, 609);
             this.classesListView.TabIndex = 0;
             this.classesListView.UseCompatibleStateImageBehavior = false;
             this.classesListView.View = System.Windows.Forms.View.Details;
@@ -1000,7 +1062,7 @@
             this.tabPage5.Controls.Add(this.dumpTextBox);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(768, 606);
+            this.tabPage5.Size = new System.Drawing.Size(768, 607);
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Dump";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1013,7 +1075,7 @@
             this.dumpTextBox.Name = "dumpTextBox";
             this.dumpTextBox.ReadOnly = true;
             this.dumpTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.dumpTextBox.Size = new System.Drawing.Size(768, 606);
+            this.dumpTextBox.Size = new System.Drawing.Size(768, 607);
             this.dumpTextBox.TabIndex = 0;
             this.dumpTextBox.WordWrap = false;
             // 
@@ -1098,29 +1160,18 @@
             this.showOriginalFileToolStripMenuItem.Visible = false;
             this.showOriginalFileToolStripMenuItem.Click += new System.EventHandler(this.showOriginalFileToolStripMenuItem_Click);
             // 
-            // miscToolStripMenuItem
+            // enableResolveDependencies
             // 
-            this.miscToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.buildPGRMapToolStripMenuItem,
-            this.buildAssetMapToolStripMenuItem});
-            this.miscToolStripMenuItem.Name = "miscToolStripMenuItem";
-            this.miscToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
-            this.miscToolStripMenuItem.Text = "Misc.";
+            this.enableResolveDependencies.Checked = true;
+            this.enableResolveDependencies.CheckOnClick = true;
+            this.enableResolveDependencies.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enableResolveDependencies.Name = "enableResolveDependencies";
+            this.enableResolveDependencies.Size = new System.Drawing.Size(225, 22);
+            this.enableResolveDependencies.Text = "Enable resolve dependencies";
+            this.enableResolveDependencies.ToolTipText = "Toggle the behaviour of loading assets.\nDisable to load file(s) without its depen" +
+    "dencies.";
+            this.enableResolveDependencies.CheckedChanged += new System.EventHandler(this.enableResolveDependencies_CheckedChanged);
             // 
-            // buildPGRMapToolStripMenuItem
-            // 
-            this.buildPGRMapToolStripMenuItem.Name = "buildPGRMapToolStripMenuItem";
-            this.buildPGRMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.buildPGRMapToolStripMenuItem.Text = "Build PGRMap";
-            this.buildPGRMapToolStripMenuItem.Click += new System.EventHandler(this.buildPGRMapToolStripMenuItem_Click);
-            // 
-            // buildAssetMapToolStripMenuItem
-            // 
-            this.buildAssetMapToolStripMenuItem.Name = "buildAssetMapToolStripMenuItem";
-            this.buildAssetMapToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.buildAssetMapToolStripMenuItem.Text = "Build AssetMap";
-            this.buildAssetMapToolStripMenuItem.Click += new System.EventHandler(this.buildAssetMapToolStripMenuItem_Click);
-            //
             // AssetStudioGUIForm
             // 
             this.AllowDrop = true;
@@ -1268,11 +1319,16 @@
         private System.Windows.Forms.ToolStripTextBox specifyUnityVersion;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem15;
         private System.Windows.Forms.ToolStripMenuItem miscToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem buildPGRMapToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem buildAssetMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem console;
-        private System.Windows.Forms.ToolStripMenuItem specifyGameVersionToolStripMenuItem;
-        private System.Windows.Forms.ToolStripComboBox specifyGameVersion;
+        private System.Windows.Forms.ToolStripMenuItem specifyCNUnityKeyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem CABMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripComboBox CABMapNameComboBox;
+        private System.Windows.Forms.ToolStripMenuItem buildCABMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearCABMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem assetMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox assetMapNameTextBox;
+        private System.Windows.Forms.ToolStripMenuItem buildAssetMapToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem enableResolveDependencies;
     }
 }
 

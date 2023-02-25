@@ -2,6 +2,7 @@
 {
     public static class ByteArrayExtensions
     {
+        public static bool IsNullOrEmpty<T>(this T[] array) => array == null || array.Length == 0;
         public static byte[] ToUInt4Array(this byte[] source) => ToUInt4Array(source, 0, source.Length);
         public static byte[] ToUInt4Array(this byte[] source, int offset, int size)
         {

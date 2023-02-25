@@ -16,16 +16,16 @@ namespace AssetStudio
 
     public interface ILogger
     {
-        void Log(LoggerEvent loggerEvent, string message);
+        void Log(LoggerEvent loggerEvent, string message, bool silent);
     }
 
     public sealed class DummyLogger : ILogger
     {
-        public void Log(LoggerEvent loggerEvent, string message) { }
+        public void Log(LoggerEvent loggerEvent, string message, bool silent) { }
     }
     public sealed class ConsoleLogger : ILogger
     {
-        public void Log(LoggerEvent loggerEvent, string message)
+        public void Log(LoggerEvent loggerEvent, string message, bool silent)
         {
             Console.WriteLine("[{0}] {1}", loggerEvent, message);
         }

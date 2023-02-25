@@ -19,4 +19,14 @@
     <PackageReference Include="K4os.Compression.LZ4" Version="1.1.11" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+  	<None Update="Keys.json">
+  		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  	</None>
+  </ItemGroup>
+
 </Project>

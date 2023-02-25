@@ -1,7 +1,7 @@
-# PGRStudio
+# CNStudio
 Check out the [original AssetStudio project](https://github.com/Perfare/AssetStudio) for more information.
 
-This is the release of PGRStudio, Modded AssetStudio that should work with Punishing: Gray Raven.
+This is the release of CNStudio, Modded AssetStudio that should work with CN unity games.
 _____________________________________________________________________________________________________________________________
 
 Some features are:
@@ -11,38 +11,36 @@ Some features are:
 - CLI version.
 - Option "Option -> Export Options -> Ignore Controller Animations" to export model/aniamators without including all animations (slow).
 - Load Assets listed in `.txt` file.
-- Support multiple game versions (Currently: "Global, JP"), Option `Options -> Specify Game Version`.
 ```
 _____________________________________________________________________________________________________________________________
 How to use:
 
 ```
-1. Build PGR Map (Misc. -> Build PGRMap).
-2. Load PGR files.
+1. Build CABMap (Misc. -> Build CABMap).
+2. Load files.
 ```
 
 CLI Version:
 ```
-AssetStudioCLI 0.16.0.0
-Copyright (C) 2022 AssetStudioCLI
+Usage:
+  AssetStudioCLI <input_path> <output_path> [options]
 
-  -v, --verbose           Show log messages.
+Arguments:
+  <input_path>   Input file/folder.
+  <output_path>  Output folder.
 
-  -t, --type              Specify unity type(s).
-
-  -f, --filter            Specify regex filter(s).
-
-  -m, --map               Build CABMap/AssetMap.
-
-  -s, --version           (Default: 0) Specify game version.
-
-  --help                  Display this help screen.
-
-  --version               Display version information.
-
-  input_path (pos. 0)     Required. Input file/folder.
-
-  output_path (pos. 1)    Required. Output folder.
+Options:
+  --silent                                                Hide log messages.
+  --names <names>                                         Specify name regex filter(s).
+  --types <Texture2D|Sprite|etc..>                        Specify unity class type(s)
+  --containers <containers>                               Specify container regex filter(s).
+  --key_index <GAMES> (REQUIRED)                          Specify key index.
+  --map_op <AssetMap|Both|CABMap|None>                    Specify which map to build. [default: None]
+  --CAB_name <CAB_name>                                   Specify CABMap file name. [default: CABMap]
+  --map_name <map_name>                                   Specify AssetMap file name. [default: assets_map]
+  --group_assets_type <ByContainer|BySource|ByType|None>  Specify how exported assets should be grouped. [default: 0]
+  --version                                               Show version information
+  -?, -h, --help                                          Show help and usage information
 ```
 
 Looking forward for feedback for issues/bugs to fix and update.

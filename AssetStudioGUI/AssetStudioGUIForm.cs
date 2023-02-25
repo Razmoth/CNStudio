@@ -98,16 +98,16 @@ namespace AssetStudioGUI
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             InitializeComponent();
-            Text = $"PGRStudio v{Application.ProductVersion}";
+            Text = $"CNStudio v{Application.ProductVersion}";
             delayTimer = new System.Timers.Timer(800);
             delayTimer.Elapsed += new ElapsedEventHandler(delayTimer_Elapsed);
             console.Checked = Properties.Settings.Default.console;
             displayAll.Checked = Properties.Settings.Default.displayAll;
             displayInfo.Checked = Properties.Settings.Default.displayInfo;
             enablePreview.Checked = Properties.Settings.Default.enablePreview;
-            specifyGameVersion.Items.AddRange(VersionManager.GetVersionNames());
-            specifyGameVersion.SelectedIndex = Properties.Settings.Default.gameVersion;
-            PGR.UpdateKey(Properties.Settings.Default.gameVersion);
+            assetsManager.ResolveDependencies = enableResolveDependencies.Checked;
+    
+
             ConsoleHelper.AllocConsole();
             ConsoleHelper.SetConsoleTitle("Debug Console");
             FMODinit();
@@ -126,8 +126,7 @@ namespace AssetStudioGUI
             }
             Progress.Default = new Progress<int>(SetProgressBarValue);
             Studio.StatusStripUpdate = StatusStripUpdate;
-            Logger.Info($"Target Version is {specifyGameVersion.SelectedItem}");
-            CABManager.LoadMap(specifyGameVersion.SelectedIndex);
+            CNUnityKeyManager.SetKey(Properties.Settings.Default.selectedCNUnityKey);
         }
 
         private void AssetStudioGUIForm_DragEnter(object sender, DragEventArgs e)
@@ -234,11 +233,11 @@ namespace AssetStudioGUI
 
             if (!string.IsNullOrEmpty(productName))
             {
-                Text = $"PGRStudio v{Application.ProductVersion} - {productName} - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
+                Text = $"CNStudio v{Application.ProductVersion} - {productName} - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
             }
             else
             {
-                Text = $"PGRStudio v{Application.ProductVersion} - Punishing: Gray Raven - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
+                Text = $"CNStudio v{Application.ProductVersion} - Punishing: Gray Raven - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
             }
 
             assetListView.VirtualListSize = visibleAssets.Count;
@@ -1258,7 +1257,7 @@ namespace AssetStudioGUI
 
         private void ResetForm()
         {
-            Text = $"PGRStudio v{Application.ProductVersion}";
+            Text = $"CNStudio v{Application.ProductVersion}";
             assetsManager.Clear();
             assemblyLoader.Clear();
             exportableAssets.Clear();
@@ -2090,54 +2089,180 @@ namespace AssetStudioGUI
             logger.ShowErrorMessage = toolStripMenuItem15.Checked;
         }
 
-        private async void buildPGRMapToolStripMenuItem_Click(object sender, EventArgs e)
+        private void specifyCNUnityKeyToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var form = new CNUnityForm();
+            form.Show();
+        }
+
+        private void CABMapNameComboBox_DropDown(object sender, EventArgs e)
+        {
+            if (CABMapNameComboBox.Enabled)
+            {
+                CABMapNameComboBox.Items.Clear();
+                CABMapNameComboBox.Items.AddRange(AssetsHelper.GetMaps());
+            }
+        }
+
+        private async void buildCABMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            miscToolStripMenuItem.DropDown.Visible = false;
+            InvokeUpdate(miscToolStripMenuItem, false);
+
+            var input = CABMapNameComboBox.Text;
+            var selectedText = CABMapNameComboBox.SelectedText;
+            var name = "";
+
+            if (!string.IsNullOrEmpty(selectedText))
+            {
+                name = selectedText;
+            }
+            else if (!string.IsNullOrEmpty(input))
+            {
+                if (input.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+                {
+                    Logger.Warning("Name has invalid characters !!");
+                    InvokeUpdate(miscToolStripMenuItem, true);
+                    return;
+                }
+
+                name = input;
+            }
+            else
+            {
+                Logger.Error("CABMap name is empty, please enter any name in ComboBox above");
+                InvokeUpdate(miscToolStripMenuItem, true);
+                return;
+            }
+
+            if (File.Exists(Path.Combine(AssetsHelper.CABMapName, $"{name}.bin")))
+            {
+                var acceptOverride = MessageBox.Show("CABMap already exist, Do you want to override it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (acceptOverride != DialogResult.Yes)
+                {
+                    InvokeUpdate(miscToolStripMenuItem, true);
+                    return;
+                }
+            }
+
             var openFolderDialog = new OpenFolderDialog();
-            openFolderDialog.Title = $"Select assets Folder";
+            openFolderDialog.Title = "Select Game Folder";
             if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
             {
-                Logger.Info("scanning for files");
-                var files = Directory.GetFiles(openFolderDialog.Folder, "*.*", SearchOption.AllDirectories).ToList();
-                Logger.Info(string.Format("found {0} files", files.Count()));
-                var version = specifyGameVersion.SelectedIndex;
-                await Task.Run(() => CABManager.BuildMap(files, version));
+                Logger.Info("Scanning for files");
+                var files = Directory.GetFiles(openFolderDialog.Folder, "*.*", SearchOption.AllDirectories).ToArray();
+                Logger.Info($"Found {files.Length} files");
+                await Task.Run(() => AssetsHelper.BuildCABMap(files, name));
             }
+            InvokeUpdate(miscToolStripMenuItem, true);
+        }
+
+        private void InvokeUpdate(ToolStripItem item, bool value)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke(new Action(() => { item.Enabled = value; }));
+            }
+            else
+            {
+                item.Enabled = value;
+            }
+        }
+
+        private void clearCABMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            miscToolStripMenuItem.DropDown.Visible = false;
+            InvokeUpdate(miscToolStripMenuItem, false);
+
+            var acceptDelete = MessageBox.Show("CABMap will be deleted, this can't be undone, continue ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (acceptDelete != DialogResult.Yes)
+            {
+                InvokeUpdate(miscToolStripMenuItem, true);
+                return;
+            }
+
+            var name = CABMapNameComboBox.Text.ToString();
+            var path = Path.Combine(AssetsHelper.CABMapName, $"{name}.bin");
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+                Logger.Info($"{name} deleted successfully !!");
+                CABMapNameComboBox.SelectedIndexChanged -= new EventHandler(CABMapNameComboBox_SelectedIndexChanged);
+                CABMapNameComboBox.Text = string.Empty;
+                CABMapNameComboBox.SelectedIndex = 0;
+                CABMapNameComboBox.SelectedIndexChanged += new EventHandler(CABMapNameComboBox_SelectedIndexChanged);
+            }
+
+            InvokeUpdate(miscToolStripMenuItem, true);
+        }
+
+        private async void CABMapNameComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            miscToolStripMenuItem.DropDown.Visible = false;
+            InvokeUpdate(miscToolStripMenuItem, false);
+
+            var name = CABMapNameComboBox.SelectedItem.ToString();
+            await Task.Run(() => AssetsHelper.LoadMap(name));
+
+            ResetForm();
+            assetsManager.SpecifyUnityVersion = specifyUnityVersion.Text;
+
+            InvokeUpdate(miscToolStripMenuItem, true);
         }
 
         private async void buildAssetMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            miscToolStripMenuItem.DropDown.Visible = false;
+            InvokeUpdate(miscToolStripMenuItem, false);
+
+            var input = assetMapNameTextBox.Text;
+            var name = "assets_map";
+
+            if (!string.IsNullOrEmpty(input))
+            {
+                if (input.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+                {
+                    Logger.Warning("Name has invalid characters !!");
+                    InvokeUpdate(miscToolStripMenuItem, true);
+                    return;
+                }
+
+                name = input;
+            }
+
             var openFolderDialog = new OpenFolderDialog();
-            openFolderDialog.Title = $"Select assets Folder";
+            openFolderDialog.Title = $"Select Game Folder";
             if (openFolderDialog.ShowDialog(this) == DialogResult.OK)
             {
-                Logger.Info("scanning for files");
-                var files = Directory.GetFiles(openFolderDialog.Folder, "*.*", SearchOption.AllDirectories).ToList();
-                Logger.Info(string.Format("found {0} files", files.Count()));
+                Logger.Info("Scanning for files");
+                var files = Directory.GetFiles(openFolderDialog.Folder, "*.*", SearchOption.AllDirectories).ToArray();
+                Logger.Info($"Found {files.Length} files");
 
                 var saveFolderDialog = new OpenFolderDialog();
                 saveFolderDialog.InitialFolder = saveDirectoryBackup;
                 saveFolderDialog.Title = "Select Output Folder";
                 if (saveFolderDialog.ShowDialog(this) == DialogResult.OK)
                 {
-                    timer.Stop();
+                    if (File.Exists(Path.Combine(saveFolderDialog.Folder, $"{name}")))
+                    {
+                        var acceptOverride = MessageBox.Show("AssetMap already exist, Do you want to override it ?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        if (acceptOverride != DialogResult.Yes)
+                        {
+                            InvokeUpdate(miscToolStripMenuItem, true);
+                            return;
+                        }
+                    }
                     saveDirectoryBackup = saveFolderDialog.Folder;
-                    List<AssetEntry> toExportAssets = await Task.Run(() => BuildAssetMap(files));
-                    ExportAssetsMap(saveFolderDialog.Folder, toExportAssets, ExportListType.XML);
+                    var toExportAssets = await Task.Run(() => AssetsHelper.BuildAssetMap(files));
+                    AssetsHelper.ExportAssetsMap(toExportAssets, name, saveFolderDialog.Folder);
                 }
             }
+            InvokeUpdate(miscToolStripMenuItem, true);
         }
 
-        private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void enableResolveDependencies_CheckedChanged(object sender, EventArgs e)
         {
-            optionsToolStripMenuItem.DropDown.Visible = false;
-            Properties.Settings.Default.gameVersion = specifyGameVersion.SelectedIndex;
-            Properties.Settings.Default.Save();
-
-            PGR.UpdateKey(specifyGameVersion.SelectedIndex);
-            Logger.Info($"Target Version is {specifyGameVersion.SelectedItem}");
-
-            ResetForm();
-            CABManager.LoadMap(specifyGameVersion.SelectedIndex);
+            assetsManager.ResolveDependencies = enableResolveDependencies.Checked;
         }
 
         private void glControl1_MouseWheel(object sender, MouseEventArgs e)

@@ -10,6 +10,9 @@ namespace AssetStudio
 {
     public class AssetsManager
     {
+        public bool Silent = false;
+        public bool SkipProcess = false;
+        public bool ResolveDependencies = false;
         public string SpecifyUnityVersion;
         public List<SerializedFile> assetsFileList = new List<SerializedFile>();
 
@@ -23,18 +26,38 @@ namespace AssetStudio
 
         public void LoadFiles(params string[] files)
         {
+            if (Silent)
+            {
+                Logger.Silent = true;
+                Progress.Silent = true;
+            }
             var path = Path.GetDirectoryName(Path.GetFullPath(files[0]));
             MergeSplitAssets(path);
             var toReadFile = ProcessingSplitFiles(files.ToList());
             Load(toReadFile);
+            if (Silent)
+            {
+                Logger.Silent = false;
+                Progress.Silent = false;
+            }
         }
 
         public void LoadFolder(string path)
         {
+            if (Silent)
+            {
+                Logger.Silent = true;
+                Progress.Silent = true;
+            }
             MergeSplitAssets(path, true);
             var files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories).ToList();
             var toReadFile = ProcessingSplitFiles(files);
             Load(toReadFile);
+            if (Silent)
+            {
+                Logger.Silent = false;
+                Progress.Silent = false;
+            }
         }
 
         private void Load(string[] files)
@@ -58,8 +81,11 @@ namespace AssetStudio
             noexistFiles.Clear();
             assetsFileListHash.Clear();
 
-            ReadAssets();
-            ProcessAssets();
+            if (!SkipProcess)
+            {
+                ReadAssets();
+                ProcessAssets();
+            }
         }
 
         private void LoadFile(string fullName)
@@ -105,31 +131,34 @@ namespace AssetStudio
                     assetsFileList.Add(assetsFile);
                     assetsFileListHash.Add(assetsFile.fileName);
 
-                    foreach (var sharedFile in assetsFile.m_Externals)
+                    if (ResolveDependencies)
                     {
-                        var sharedFileName = sharedFile.fileName;
-
-                        if (!importFilesHash.Contains(sharedFileName))
+                        foreach (var sharedFile in assetsFile.m_Externals)
                         {
-                            var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
-                            if (!noexistFiles.Contains(sharedFilePath))
+                            var sharedFileName = sharedFile.fileName;
+
+                            if (!importFilesHash.Contains(sharedFileName))
                             {
-                                if (!File.Exists(sharedFilePath))
+                                var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
+                                if (!noexistFiles.Contains(sharedFilePath))
                                 {
-                                    var findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
-                                    if (findFiles.Length > 0)
+                                    if (!File.Exists(sharedFilePath))
                                     {
-                                        sharedFilePath = findFiles[0];
+                                        var findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
+                                        if (findFiles.Length > 0)
+                                        {
+                                            sharedFilePath = findFiles[0];
+                                        }
                                     }
-                                }
-                                if (File.Exists(sharedFilePath))
-                                {
-                                    importFiles.Add(sharedFilePath);
-                                    importFilesHash.Add(sharedFileName);
-                                }
-                                else
-                                {
-                                    noexistFiles.Add(sharedFilePath);
+                                    if (File.Exists(sharedFilePath))
+                                    {
+                                        importFiles.Add(sharedFilePath);
+                                        importFilesHash.Add(sharedFileName);
+                                    }
+                                    else
+                                    {
+                                        noexistFiles.Add(sharedFilePath);
+                                    }
                                 }
                             }
                         }
@@ -164,35 +193,38 @@ namespace AssetStudio
                     assetsFileList.Add(assetsFile);
                     assetsFileListHash.Add(assetsFile.fileName);
 
-                    foreach (var sharedFile in assetsFile.m_Externals)
+                    if (ResolveDependencies)
                     {
-                        var sharedFileName = sharedFile.fileName;
-
-                        if (!importFilesHash.Contains(sharedFileName))
+                        foreach (var sharedFile in assetsFile.m_Externals)
                         {
-                            var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
-                            if (!noexistFiles.Contains(sharedFilePath))
+                            var sharedFileName = sharedFile.fileName;
+
+                            if (!importFilesHash.Contains(sharedFileName))
                             {
-                                if (!File.Exists(sharedFilePath))
+                                var sharedFilePath = Path.Combine(Path.GetDirectoryName(reader.FullPath), sharedFileName);
+                                if (!noexistFiles.Contains(sharedFilePath))
                                 {
-                                    var findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
-                                    if (findFiles.Length > 0)
+                                    if (!File.Exists(sharedFilePath))
                                     {
-                                        sharedFilePath = findFiles[0];
+                                        var findFiles = Directory.GetFiles(Path.GetDirectoryName(reader.FullPath), sharedFileName, SearchOption.AllDirectories);
+                                        if (findFiles.Length > 0)
+                                        {
+                                            sharedFilePath = findFiles[0];
+                                        }
                                     }
-                                }
-                                if (CABManager.CABMap.TryGetValue(sharedFileName, out var path))
-                                {
-                                    sharedFilePath = path;
-                                }
-                                if (File.Exists(sharedFilePath))
-                                {
-                                    importFiles.Add(sharedFilePath);
-                                    importFilesHash.Add(sharedFileName);
-                                }
-                                else
-                                {
-                                    noexistFiles.Add(sharedFilePath);
+                                    if (AssetsHelper.TryGet(sharedFileName, out var path))
+                                    {
+                                        sharedFilePath = path;
+                                    }
+                                    if (File.Exists(sharedFilePath))
+                                    {
+                                        importFiles.Add(sharedFilePath);
+                                        importFilesHash.Add(sharedFileName);
+                                    }
+                                    else
+                                    {
+                                        noexistFiles.Add(sharedFilePath);
+                                    }
                                 }
                             }
                         }
