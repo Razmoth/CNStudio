@@ -1,6 +1,6 @@
 ﻿namespace AssetStudioGUI
 {
-    partial class CNUnityForm
+    partial class UnityCNForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,30 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.specifyCNUnityList = new System.Windows.Forms.DataGridView();
+            this.specifyUnityCNList = new System.Windows.Forms.DataGridView();
             this.NameField = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.KeyField = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            ((System.ComponentModel.ISupportInitialize)(this.specifyCNUnityList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.specifyUnityCNList)).BeginInit();
             this.SuspendLayout();
             // 
-            // specifyCNUnityList
+            // specifyUnityCNList
             // 
-            this.specifyCNUnityList.AllowUserToResizeColumns = false;
-            this.specifyCNUnityList.AllowUserToResizeRows = false;
-            this.specifyCNUnityList.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.specifyCNUnityList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.specifyCNUnityList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.specifyUnityCNList.AllowUserToResizeColumns = false;
+            this.specifyUnityCNList.AllowUserToResizeRows = false;
+            this.specifyUnityCNList.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.specifyUnityCNList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.specifyUnityCNList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.NameField,
             this.KeyField});
-            this.specifyCNUnityList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.specifyCNUnityList.Location = new System.Drawing.Point(0, 0);
-            this.specifyCNUnityList.MultiSelect = false;
-            this.specifyCNUnityList.Name = "specifyCNUnityList";
-            this.specifyCNUnityList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.specifyCNUnityList.RowTemplate.Height = 25;
-            this.specifyCNUnityList.Size = new System.Drawing.Size(408, 204);
-            this.specifyCNUnityList.TabIndex = 0;
-            this.specifyCNUnityList.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.specifyCNUnityList_RowHeaderMouseDoubleClick);
+            this.specifyUnityCNList.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.specifyUnityCNList.Location = new System.Drawing.Point(0, 0);
+            this.specifyUnityCNList.MultiSelect = false;
+            this.specifyUnityCNList.Name = "specifyUnityCNList";
+            this.specifyUnityCNList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.specifyUnityCNList.RowTemplate.Height = 25;
+            this.specifyUnityCNList.Size = new System.Drawing.Size(408, 204);
+            this.specifyUnityCNList.TabIndex = 0;
+            this.specifyUnityCNList.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.specifyUnityCNList_RowHeaderMouseDoubleClick);
             // 
             // NameField
             // 
@@ -65,29 +65,29 @@
             this.KeyField.HeaderText = "Key";
             this.KeyField.Name = "KeyField";
             // 
-            // CNUnityForm
+            // UnityCNForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(408, 204);
-            this.Controls.Add(this.specifyCNUnityList);
+            this.Controls.Add(this.specifyUnityCNList);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "CNUnityForm";
+            this.Name = "UnityCNForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "CNUnityForm";
+            this.Text = "UnityCNForm";
             this.TopMost = true;
-            ((System.ComponentModel.ISupportInitialize)(this.specifyCNUnityList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.specifyUnityCNList)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.DataGridView specifyCNUnityList;
+        private System.Windows.Forms.DataGridView specifyUnityCNList;
         private System.Windows.Forms.DataGridViewTextBoxColumn NameField;
         private System.Windows.Forms.DataGridViewTextBoxColumn KeyField;
     }

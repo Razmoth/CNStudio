@@ -14,7 +14,7 @@ namespace AssetStudio
         BlocksInfoAtTheEnd = 0x80,
         OldWebPluginCompatibility = 0x100,
         BlockInfoNeedPaddingAtStart = 0x200,
-        CNUnityEncryption = 0x400
+        UnityCNEncryption = 0x400
     }
 
     [Flags]
@@ -62,7 +62,7 @@ namespace AssetStudio
             public string path;
         }
 
-        public CNUnity CNUnity;
+        public UnityCN UnityCN;
         public Header m_Header;
         private StorageBlock[] m_BlocksInfo;
         private Node[] m_DirectoryInfo;
@@ -95,7 +95,7 @@ namespace AssetStudio
                     break;
                 case "UnityFS":
                     ReadHeader(reader);
-                    ReadCNUnity(reader);
+                    ReadUnityCN(reader);
                     ReadBlocksInfoAndDirectory(reader);
                     using (var blocksStream = CreateBlocksStream(reader.FullPath))
                     {
@@ -231,7 +231,7 @@ namespace AssetStudio
             }
         }
 
-        private void ReadCNUnity(EndianBinaryReader reader)
+        private void ReadUnityCN(EndianBinaryReader reader)
         {
             ArchiveFlags mask;
 
@@ -246,12 +246,12 @@ namespace AssetStudio
             }
             else
             {
-                mask = ArchiveFlags.CNUnityEncryption;
+                mask = ArchiveFlags.UnityCNEncryption;
             }
 
             if ((m_Header.flags & mask) != 0)
             {
-                CNUnity = new CNUnity(reader);
+                UnityCN = new UnityCN(reader);
             }
         }
 
@@ -370,7 +370,7 @@ namespace AssetStudio
                             var uncompressedBytes = BigArrayPool<byte>.Shared.Rent(uncompressedSize);
                             if (((int)blockInfo.flags & 0x100) != 0)
                             {
-                                CNUnity.DecryptBlock(compressedBytes, compressedSize, i);
+                                UnityCN.DecryptBlock(compressedBytes, compressedSize, i);
                             }
                             var numWrite = LZ4Codec.Decode(compressedBytes, 0, compressedSize, uncompressedBytes, 0, uncompressedSize);
                             if (numWrite != uncompressedSize)

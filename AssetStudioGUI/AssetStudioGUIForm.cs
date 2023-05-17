@@ -126,7 +126,7 @@ namespace AssetStudioGUI
             }
             Progress.Default = new Progress<int>(SetProgressBarValue);
             Studio.StatusStripUpdate = StatusStripUpdate;
-            CNUnityKeyManager.SetKey(Properties.Settings.Default.selectedCNUnityKey);
+            UnityCNKeyManager.SetKey(Properties.Settings.Default.selectedUnityCNKey);
         }
 
         private void AssetStudioGUIForm_DragEnter(object sender, DragEventArgs e)
@@ -2089,9 +2089,9 @@ namespace AssetStudioGUI
             logger.ShowErrorMessage = toolStripMenuItem15.Checked;
         }
 
-        private void specifyCNUnityKeyToolStripMenuItem_Click(object sender, EventArgs e)
+        private void specifyUnityCNKeyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = new CNUnityForm();
+            var form = new UnityCNForm();
             form.Show();
         }
 

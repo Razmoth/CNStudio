@@ -53,13 +53,13 @@ namespace AssetStudioGUI.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int selectedCNUnityKey
+        public int selectedUnityCNKey
         {
             get {
-                return ((int)(this["selectedCNUnityKey"]));
+                return ((int)(this["selectedUnityCNKey"]));
             }
             set {
-                this["selectedCNUnityKey"] = value;
+                this["selectedUnityCNKey"] = value;
             }
         }
         

@@ -75,7 +75,7 @@ namespace AssetStudioCLI
             TypeFilter = new Option<ClassIDType[]>("--types", "Specify unity class type(s)") { AllowMultipleArgumentsPerToken = true, ArgumentHelpName = "Texture2D|Sprite|etc.." };
             NameFilter = new Option<Regex[]>("--names", result => result.Tokens.Select(x => new Regex(x.Value, RegexOptions.IgnoreCase)).ToArray(), false, "Specify name regex filter(s).") { AllowMultipleArgumentsPerToken = true };
             ContainerFilter = new Option<Regex[]>("--containers", result => result.Tokens.Select(x => new Regex(x.Value, RegexOptions.IgnoreCase)).ToArray(), false, "Specify container regex filter(s).") { AllowMultipleArgumentsPerToken = true };
-            KeyIndex = new Option<int>("--key_index", $"Specify key index.") { IsRequired = true, ArgumentHelpName = CNUnityKeyManager.ToString() };
+            KeyIndex = new Option<int>("--key_index", $"Specify key index.") { IsRequired = true, ArgumentHelpName = UnityCNKeyManager.ToString() };
             MapOp = new Option<MapOpType>("--map_op", "Specify which map to build.");
             CABName = new Option<string>("--CAB_name", "Specify CABMap file name.");
             MapName = new Option<string>("--map_name", "Specify AssetMap file name.");

@@ -14,15 +14,15 @@ namespace AssetStudioCLI
         {
             try
             {
-                if (!CNUnityKeyManager.TryGetEntry(o.KeyIndex, out var cnunity))
+                if (!UnityCNKeyManager.TryGetEntry(o.KeyIndex, out var unityCN))
                 {
                     Console.WriteLine("Invalid key index !!");
-                    Console.WriteLine($"Available Options: \n{CNUnityKeyManager.ToString()}");
+                    Console.WriteLine($"Available Options: \n{UnityCNKeyManager.ToString()}");
                     return;
                 }
 
-                CNUnity.SetKey(cnunity);
-                Logger.Info($"[CNUnity] Selected Key is {cnunity}");
+                UnityCN.SetKey(unityCN);
+                Logger.Info($"[UnityCN] Selected Key is {unityCN}");
 
                 if (!o.Silent)
                 {

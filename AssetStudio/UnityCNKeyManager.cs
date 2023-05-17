@@ -8,19 +8,19 @@ using System.Xml.Linq;
 
 namespace AssetStudio
 {
-    public static class CNUnityKeyManager
+    public static class UnityCNKeyManager
     {
         public const string KeysFileName = "Keys.json";
 
-        private static List<CNUnity.Entry> Entries = new List<CNUnity.Entry>();
+        private static List<UnityCN.Entry> Entries = new List<UnityCN.Entry>();
 
-        static CNUnityKeyManager()
+        static UnityCNKeyManager()
         {
             var str = File.ReadAllText(KeysFileName);
-            Entries = JsonConvert.DeserializeObject<List<CNUnity.Entry>>(str);
+            Entries = JsonConvert.DeserializeObject<List<UnityCN.Entry>>(str);
         }
 
-        public static void SaveEntries(List<CNUnity.Entry> entries)
+        public static void SaveEntries(List<UnityCN.Entry> entries)
         {
             Entries.Clear();
             Entries.AddRange(entries);
@@ -31,15 +31,15 @@ namespace AssetStudio
 
         public static void SetKey(int index)
         {
-            if (TryGetEntry(index, out var cnunity))
+            if (TryGetEntry(index, out var unityCN))
             {
-                if (CNUnity.SetKey(cnunity))
+                if (UnityCN.SetKey(unityCN))
                 {
-                    Logger.Info($"[CNUnity] Selected Key is {cnunity}");
+                    Logger.Info($"[UnityCN] Selected Key is {unityCN}");
                 }
                 else
                 {
-                    Logger.Info($"[CNUnity] No Key is selected !!");
+                    Logger.Info($"[UnityCN] No Key is selected !!");
                 }
             }
             else
@@ -49,7 +49,7 @@ namespace AssetStudio
             }
         }
 
-        public static bool TryGetEntry(int index, out CNUnity.Entry key)
+        public static bool TryGetEntry(int index, out UnityCN.Entry key)
         {
             try
             {
@@ -62,14 +62,14 @@ namespace AssetStudio
             }
             catch(Exception e)
             {
-                Logger.Error($"[CNUnity] Invalid Index, check if list is not empty !!\n{e.Message}");
+                Logger.Error($"[UnityCN] Invalid Index, check if list is not empty !!\n{e.Message}");
                 key = null;
                 return false;
             }
 
             return true;
         }
-        public static CNUnity.Entry[] GetEntries() => Entries.ToArray();
+        public static UnityCN.Entry[] GetEntries() => Entries.ToArray();
 
         public new static string ToString() => string.Join("\n", GetEntries().Select((x, i) => $"{i}: {x.Name}"));
     }

@@ -5,7 +5,7 @@ using System.Globalization;
 
 namespace AssetStudio
 {
-    public class CNUnity
+    public class UnityCN
     {
         private const string Signature = "#$unity3dchina!@";
 
@@ -14,7 +14,7 @@ namespace AssetStudio
         public byte[] Index = new byte[0x10];
         public byte[] Sub = new byte[0x10];
 
-        public CNUnity(EndianBinaryReader reader)
+        public UnityCN(EndianBinaryReader reader)
         {
             reader.ReadUInt32();
 
@@ -58,7 +58,7 @@ namespace AssetStudio
             }
             catch (Exception e)
             {
-                Logger.Error($"[CNUnity] Invalid key !!\n{e.Message}");
+                Logger.Error($"[UnityCN] Invalid key !!\n{e.Message}");
                 return false;
             }
             return true;
@@ -146,7 +146,7 @@ namespace AssetStudio
                 var bytes = GenerateKey();
                 if (bytes.Length != 0x10)
                 {
-                    Logger.Warning($"[CNUnity] {this} has invalid key, size should be 16 bytes, skipping...");
+                    Logger.Warning($"[UnityCN] {this} has invalid key, size should be 16 bytes, skipping...");
                     return false;
                 }
 

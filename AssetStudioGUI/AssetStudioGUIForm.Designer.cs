@@ -45,7 +45,7 @@ namespace AssetStudioGUI
             this.displayInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem14 = new System.Windows.Forms.ToolStripMenuItem();
             this.specifyUnityVersion = new System.Windows.Forms.ToolStripTextBox();
-            this.specifyCNUnityKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.specifyUnityCNKeyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showExpOpt = new System.Windows.Forms.ToolStripMenuItem();
             this.modelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportAllObjectssplitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -229,7 +229,7 @@ namespace AssetStudioGUI
             this.displayInfo,
             this.enableResolveDependencies,
             this.toolStripMenuItem14,
-            this.specifyCNUnityKeyToolStripMenuItem,
+            this.specifyUnityCNKeyToolStripMenuItem,
             this.showExpOpt});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
@@ -283,12 +283,12 @@ namespace AssetStudioGUI
             this.specifyUnityVersion.Name = "specifyUnityVersion";
             this.specifyUnityVersion.Size = new System.Drawing.Size(100, 23);
             // 
-            // specifyCNUnityKeyToolStripMenuItem
+            // specifyUnityCNKeyToolStripMenuItem
             // 
-            this.specifyCNUnityKeyToolStripMenuItem.Name = "specifyCNUnityKeyToolStripMenuItem";
-            this.specifyCNUnityKeyToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-            this.specifyCNUnityKeyToolStripMenuItem.Text = "Specify CNUnity Key";
-            this.specifyCNUnityKeyToolStripMenuItem.Click += new System.EventHandler(this.specifyCNUnityKeyToolStripMenuItem_Click);
+            this.specifyUnityCNKeyToolStripMenuItem.Name = "specifyUnityCNKeyToolStripMenuItem";
+            this.specifyUnityCNKeyToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.specifyUnityCNKeyToolStripMenuItem.Text = "Specify UnityCN Key";
+            this.specifyUnityCNKeyToolStripMenuItem.Click += new System.EventHandler(this.specifyUnityCNKeyToolStripMenuItem_Click);
             // 
             // showExpOpt
             // 
@@ -1320,7 +1320,7 @@ namespace AssetStudioGUI
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem15;
         private System.Windows.Forms.ToolStripMenuItem miscToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem console;
-        private System.Windows.Forms.ToolStripMenuItem specifyCNUnityKeyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem specifyUnityCNKeyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem CABMapToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox CABMapNameComboBox;
         private System.Windows.Forms.ToolStripMenuItem buildCABMapToolStripMenuItem;
