@@ -231,14 +231,19 @@ namespace AssetStudioGUI
             (var productName, var treeNodeCollection) = await Task.Run(() => BuildAssetData());
             var typeMap = await Task.Run(() => BuildClassStructure());
 
-            if (!string.IsNullOrEmpty(productName))
+            if (string.IsNullOrEmpty(productName))
             {
-                Text = $"CNStudio v{Application.ProductVersion} - {productName} - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
+                if (UnityCNKeyManager.TryGetEntry(Properties.Settings.Default.selectedUnityCNKey, out var unityCN))
+                {
+                    productName = unityCN.Name;
+                }
+                else
+                {
+                    productName = "no productName";
+                }
             }
-            else
-            {
-                Text = $"CNStudio v{Application.ProductVersion} - Punishing: Gray Raven - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
-            }
+
+            Text = $"CNStudio v{Application.ProductVersion} - {productName} - {assetsManager.assetsFileList[0].unityVersion} - {assetsManager.assetsFileList[0].m_TargetPlatform}";
 
             assetListView.VirtualListSize = visibleAssets.Count;
 

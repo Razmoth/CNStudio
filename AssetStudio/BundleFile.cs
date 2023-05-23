@@ -67,7 +67,9 @@ namespace AssetStudio
         private StorageBlock[] m_BlocksInfo;
         private Node[] m_DirectoryInfo;
 
-        public StreamFile[] fileList = new StreamFile[0];
+        public StreamFile[] fileList;
+
+        private bool HasBlockInfoNeedPaddingAtStart;
 
         public BundleFile(FileReader reader)
         {
@@ -243,10 +245,12 @@ namespace AssetStudio
                 (version[0] == 2022 && version[1] == 3 && version[2] <= 1)) //2022.3.1 and earlier
             {
                 mask = ArchiveFlags.BlockInfoNeedPaddingAtStart;
+                HasBlockInfoNeedPaddingAtStart = false;
             }
             else
             {
                 mask = ArchiveFlags.UnityCNEncryption;
+                HasBlockInfoNeedPaddingAtStart = true;
             }
 
             if ((m_Header.flags & mask) != 0)
@@ -336,10 +340,10 @@ namespace AssetStudio
                     };
                 }
             }
-            //if ((m_Header.flags & ArchiveFlags.BlockInfoNeedPaddingAtStart) != 0)
-            //{
-            //    reader.AlignStream(16);
-            //}
+            if ((m_Header.flags & ArchiveFlags.BlockInfoNeedPaddingAtStart) != 0 && HasBlockInfoNeedPaddingAtStart)
+            {
+                reader.AlignStream(16);
+            }
         }
 
         private void ReadBlocks(EndianBinaryReader reader, Stream blocksStream)
