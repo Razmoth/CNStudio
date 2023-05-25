@@ -48,3 +48,9 @@ Looking forward for feedback for issues/bugs to fix and update.
 _____________________________________________________________________________________________________________________________
 Special Thank to:
 - Perfare: Original author.
+_____________________________________________________________________________________________________________________________
+
+If you find `CNStudio` useful, you can leave a star 😄
+If you want to support (optional), you can do so [here](https://ko-fi.com/razmoth)
+
+Thank you, looking forward for your feedback
