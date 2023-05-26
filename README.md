@@ -51,6 +51,5 @@ Special Thank to:
 _____________________________________________________________________________________________________________________________
 
 If you find `CNStudio` useful, you can leave a star 😄
-If you want to support (optional), you can do so [here](https://ko-fi.com/razmoth)
 
 Thank you, looking forward for your feedback
