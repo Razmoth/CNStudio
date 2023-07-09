@@ -21,7 +21,7 @@ namespace AssetStudio
 
         private bool IsExportableType() => ExportableTypes.Contains((ClassIDType)classID);
 
-        private readonly static List<ClassIDType> ExportableTypes = new List<ClassIDType> { ClassIDType.GameObject, ClassIDType.Material, ClassIDType.Texture2D, ClassIDType.Shader, ClassIDType.TextAsset, ClassIDType.Font, ClassIDType.Sprite };
+        private readonly static List<ClassIDType> ExportableTypes = new List<ClassIDType> { ClassIDType.AssetBundle, ClassIDType.GameObject, ClassIDType.Material, ClassIDType.Texture2D, ClassIDType.Shader, ClassIDType.TextAsset, ClassIDType.Font, ClassIDType.Sprite };
 
     }
 }
