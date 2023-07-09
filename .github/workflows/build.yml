@@ -3,6 +3,12 @@ name: Build
 on:
   push:
     tags: [ '*' ]
+    paths-ignore:
+      - '**/LICENSE'
+      - '**/README.md'
+      - '.github/**'
+      - '**/.gitignore'
+      - '**/.gitattributes'
 
   workflow_dispatch:
 

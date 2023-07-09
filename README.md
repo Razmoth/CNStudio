@@ -48,3 +48,8 @@ Looking forward for feedback for issues/bugs to fix and update.
 _____________________________________________________________________________________________________________________________
 Special Thank to:
 - Perfare: Original author.
+_____________________________________________________________________________________________________________________________
+
+If you find `CNStudio` useful, you can leave a star 😄
+
+Thank you, looking forward for your feedback
