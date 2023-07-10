@@ -1,6 +1,5 @@
 # CNStudio
-This reposotry has been archieved, use [Studio](https://github.com/RazTools/Studio) instead.
-_____________________________________________________________________________________________________________________________
+## This reposotry has been archieved, use [Studio](https://github.com/RazTools/Studio) instead.
 Check out the [original AssetStudio project](https://github.com/Perfare/AssetStudio) for more information.
 
 This is the release of CNStudio, Modded AssetStudio that should work with CN unity games.
